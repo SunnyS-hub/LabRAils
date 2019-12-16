@@ -1,9 +1,16 @@
 class AuthorsController < ApplicationController
-#before_action :authenticate_user!
+before_action :require_admin
 private
     def params_hash
       params.require(:author).permit(:name)
     end
+
+#    def require_admin
+#      if !current_user || !current_user.admin?
+#        flash[:danger] = "Not permitted"
+#        redirect_to root_path
+#      end
+#    end
 
 public
   def new
@@ -13,7 +20,7 @@ public
   def create
     @author = Author.new(params_hash)
     if @author.save
-      flash[:success] = "Auther successfully added"
+      flash[:success] = "Author successfully added"
       redirect_to authors_path
     else
       render 'new'
@@ -24,8 +31,6 @@ public
     @allAuthors = Author.all
   end
 
-
-
   def destroy
     @author = Author.find(params[:id])
     if @author.present?
@@ -34,4 +39,8 @@ public
     flash[:danger] = "Author deleted"
     redirect_to authors_path
   end
+
+
+
+
 end
